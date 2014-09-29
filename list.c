@@ -13,7 +13,6 @@ struct node {
 */
 
 
-
 void list_append(int num, struct node**head){
 	struct node *new = malloc(sizeof(struct node));
 	new->number = num;
