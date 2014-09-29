@@ -161,18 +161,29 @@ int main(int argc, char **argv) {
      */
     process_data(datafile);
     fclose(datafile);
+struct timeval usertime; //Possibly include in separate function
+    struct timeval systime;  //If it does not affect reported time.      
+    struct rusage usage;
+    if(getrusage(RUSAGE_SELF, &usage)==-1) { 
+    	printf("getrusage error %s\n", strerror(errno));//This should never happen
+    	exit(-1);
+    }
+    usertime = usage.ru_utime;
+    systime = usage.ru_stime;
+    printf("User time: %f\n", (double)usertime.tv_sec+(double)usertime.tv_usec/1000000);
+    printf("System time: %f\n", (double)systime.tv_sec+(double)systime.tv_usec/1000000);
 	//time stuff;
-
+/*
 	printf("*** List Contents End ***\n");
-    	struct timeval user; 
-    	struct timeval sys;        
+    	struct timeval usertime; 
+    	struct timeval systime;        
     	struct rusage usage;
     	getrusage(RUSAGE_SELF, &usage);
-    	user = usage.ru_utime;
-    	sys = usage.ru_stime;
-	printf("User time: %f\n", (double)user.tv_sec		+(double)user.tv_usec/1000000);
-    	printf("System time: %f\n", (double)sys.tv_sec+(double)sys.tv_usec/1000000);
-
+    	usertime = usage.ru_utime;
+    	systime = usage.ru_stime;
+	printf("User time: %f\n", (double)usertime.tv_sec		+(double)usertime.tv_usec/1000000);
+    	printf("System time: %f\n", (double)systime.tv_sec+(double)systime.tv_usec/1000000);
+*/
 
     return 0;
 }
