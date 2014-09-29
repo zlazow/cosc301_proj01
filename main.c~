@@ -25,7 +25,7 @@ char** tokenify(const char *s) {
 	char **words=malloc(sizeof(char*)*(strlen(s)));
 	token = strtok(copy ," \n\t");
 	while (token!=NULL){
-		//fix case similar to "123#Apple 123"
+		//Error case is null...so no 
 		if (strstr(token, "#")==NULL){
 		//if the line contains a #, ignore the rest of the tokens.
 			words[count]=strdup(token);
@@ -108,6 +108,7 @@ void process_data(FILE *input_file) {
 			}
 	
 			if (is_int){
+				//do not to worry if atoi=0 [can't convert] b/c we already check if its a number.
 				int int_token = atoi(tokens[i]);
 				list_append(int_token, &head);
 			}
@@ -161,29 +162,22 @@ int main(int argc, char **argv) {
      */
     process_data(datafile);
     fclose(datafile);
-struct timeval usertime; //Possibly include in separate function
-    struct timeval systime;  //If it does not affect reported time.      
-    struct rusage usage;
-    if(getrusage(RUSAGE_SELF, &usage)==-1) { 
-    	printf("getrusage error %s\n", strerror(errno));//This should never happen
-    	exit(-1);
-    }
-    usertime = usage.ru_utime;
-    systime = usage.ru_stime;
-    printf("User time: %f\n", (double)usertime.tv_sec+(double)usertime.tv_usec/1000000);
-    printf("System time: %f\n", (double)systime.tv_sec+(double)systime.tv_usec/1000000);
 	//time stuff;
-/*
+
 	printf("*** List Contents End ***\n");
-    	struct timeval usertime; 
-    	struct timeval systime;        
+    	struct timeval user; 
+    	struct timeval sys;        
     	struct rusage usage;
-    	getrusage(RUSAGE_SELF, &usage);
-    	usertime = usage.ru_utime;
-    	systime = usage.ru_stime;
-	printf("User time: %f\n", (double)usertime.tv_sec		+(double)usertime.tv_usec/1000000);
-    	printf("System time: %f\n", (double)systime.tv_sec+(double)systime.tv_usec/1000000);
-*/
+	//redundancy case
+	if(getrusage(RUSAGE_SELF, &usage) != 0) {
+        	printf("rusage children error: %s", strerror(errno));
+        	exit(-1);
+    	}
+    	user = usage.ru_utime;
+    	sys = usage.ru_stime;
+	printf("User time: %ld\n", (double)user.tv_sec		+(double)user.tv_usec/1000000);
+    	printf("System time: %ld\n", (double)sys.tv_sec+(double)sys.tv_usec/1000000);
+
 
     return 0;
 }

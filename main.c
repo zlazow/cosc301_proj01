@@ -25,7 +25,7 @@ char** tokenify(const char *s) {
 	char **words=malloc(sizeof(char*)*(strlen(s)));
 	token = strtok(copy ," \n\t");
 	while (token!=NULL){
-		//fix case similar to "123#Apple 123"
+		//Error case is null...so no 
 		if (strstr(token, "#")==NULL){
 		//if the line contains a #, ignore the rest of the tokens.
 			words[count]=strdup(token);
@@ -108,6 +108,7 @@ void process_data(FILE *input_file) {
 			}
 	
 			if (is_int){
+				//do not to worry if atoi=0 [can't convert] b/c we already check if its a number.
 				int int_token = atoi(tokens[i]);
 				list_append(int_token, &head);
 			}
@@ -167,7 +168,11 @@ int main(int argc, char **argv) {
     	struct timeval user; 
     	struct timeval sys;        
     	struct rusage usage;
-    	getrusage(RUSAGE_SELF, &usage);
+	//redundancy case
+	if(getrusage(RUSAGE_SELF, &usage) != 0) {
+        	printf("rusage children error: %s", strerror(errno));
+        	exit(-1);
+    	}
     	user = usage.ru_utime;
     	sys = usage.ru_stime;
 	printf("User time: %f\n", (double)user.tv_sec		+(double)user.tv_usec/1000000);
