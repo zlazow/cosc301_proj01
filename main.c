@@ -1,7 +1,7 @@
 /*
  *
  * Zachary Lazow, Ethan Jones. 
-	There is an issue with strdup(token) on line 31. The memory is never deallocated even though I call free on the words array that contains it.
+	There is an issue with strdup(token) on line 30. The memory is never deallocated even though I call free on the words array that contains it.
  *
  */
 
@@ -18,14 +18,13 @@
 
 char** tokenify(const char *s) {
     // input a constant string --> return an array of token strings (that were separated by whitespace)
-	//need to fix if # is beginning of line
 	int count = 0;
 	char *copy = strdup(s);
 	char *token;
 	char **words=malloc(sizeof(char*)*(strlen(s)));
 	token = strtok(copy ," \n\t");
 	while (token!=NULL){
-		//Error case is null...so no 
+		//Error case is null...so no redundancy needed 
 		if (strstr(token, "#")==NULL){
 		//if the line contains a #, ignore the rest of the tokens.
 			words[count]=strdup(token);
@@ -57,13 +56,11 @@ void process_data(FILE *input_file) {
     // built-in function
 
 /* 
-0) Open file (Already done???)
+Basic Algorithm
+0) Open file
 1) Read through each line -- fgets().
 2) Tokenify the line. Ignore comments (#) and blanklines.
 	a) If not in comment-->if token == int --> add to link list.
-		i) negative number issue "-"?
-		ii)
-
 	b) Else ignore.
 3) Sort linked list.
 4) Print to command line:
@@ -71,23 +68,17 @@ void process_data(FILE *input_file) {
 	b) CPU Resource Statistics (formatted)
 		i) amount of time program spent executing in user space
 		ii) amount of time spent executing in kernel space.
-		
-5) fclose()
 
 */
 
-//char *fgets(char *str, int n, FILE *stream)
-//how big to make????
-	/*if (input_file!=stdin){
-		fopen(input_file, "r");
-	} */ 
+
 	printf("Starting..\n");
 	struct node *head=NULL;
 	char line[1024];
 	while (fgets(line, 1024, input_file)!=NULL){
 		//printf("Line: ");
 		//printf("%s", line);
-		char ** tokens = tokenify(line); //not sure if line must be const, or simply will be interpreted as a constant in the function.
+		char ** tokens = tokenify(line);
 		for (int i = 0; tokens[i]!=NULL; i++){
 			//loop through all indexes in the token...isdigt then....		
 			int is_int = 1;
@@ -100,7 +91,6 @@ void process_data(FILE *input_file) {
 				}
 				if (!isdigit(tokens[i][j])){
 					//check negative numbers...
-					//fix if "123-456"
 					is_int=0;
 					break;
 					
